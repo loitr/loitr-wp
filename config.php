@@ -22,7 +22,7 @@ $loitrConfig = array(
 
 				# ADD YOUR SERVICE IDENTIFIER HERE, eg., 'serviceid' => '3987',
 				# This ID will be provided to you by contact@appavatar.com after verifying that you own this blog.
-				'serviceid' => '18',
+				'serviceid' => '',
 
 				# The REST endpoint where this plugin connects to contact with Loitr.
 				# This is a constant. Don't change.
