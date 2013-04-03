@@ -4,7 +4,7 @@ Plugin Name: Loitr Login
 Plugin URI: http://loitr.in/
 Description: Loitr would enable users of your blog to sign in without having to type their login credentials. Loitr doesn't need to know any of your users' login credentials or passwords.
 Version: 1.0
-Author: Loitr
+Author: Appavatar
 Author URI: http://appavatar.com/
 Author Email: contact@loitr.in
 License: Apache 2.0

@@ -25,8 +25,9 @@ function activatePlugin() {
 
 	$sqlMappingsTbl = "CREATE TABLE IF NOT EXISTS {$loitrConfig['tables']['mappings']['aliasedto']} ({$loitrConfig['tables']['mappings']['columns']['deviceid']} varchar(250) NOT NULL, {$loitrConfig['tables']['mappings']['columns']['vector']} text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 	$sqlTokensTbl = "CREATE TABLE IF NOT EXISTS {$loitrConfig['tables']['tokens']['aliasedto']} ({$loitrConfig['tables']['tokens']['columns']['userid']} varchar(250) NOT NULL, {$loitrConfig['tables']['tokens']['columns']['token']} varchar(50) NOT NULL, {$loitrConfig['tables']['tokens']['columns']['tokentype']} varchar(20) NOT NULL, {$loitrConfig['tables']['tokens']['columns']['expireson']} bigint(20) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-	if(!$loitrConfig['dbConnection']->query($sqlMappingsTbl)) LoitrLoginHelpers::oopsie(array('title' => "Loitr was unable to create the 'Mappings' table.", 'body' => 'Which means either the database is not setup correctly or Wordpress does not have the proper access yet. The query is listed below if you want to run it yourself', 'additional' => $sqlMappingsTbl));
-	if(!$loitrConfig['dbConnection']->query($sqlTokensTbl)) LoitrLoginHelpers::oopsie(array('title' => "Loitr was unable to create the 'Tokens' table.", 'body' => 'Which means either the database is not setup correctly or Wordpress does not have the proper access yet. The query is listed below if you want to run it yourself', 'additional' => $sqlTokensTbl));
+	if($loitrConfig['dbConnection']->query($sqlMappingsTbl) === false) LoitrLoginHelpers::oopsie(array('title' => "Loitr was unable to create the 'Mappings' table.", 'body' => 'Which means either the database is not setup correctly or Wordpress does not have the proper access yet. The query is listed below if you want to run it yourself', 'additional' => $sqlMappingsTbl));
+	sleep(2);
+	if($loitrConfig['dbConnection']->query($sqlTokensTbl) === false) LoitrLoginHelpers::oopsie(array('title' => "Loitr was unable to create the 'Tokens' table.", 'body' => 'Which means either the database is not setup correctly or Wordpress does not have the proper access yet. The query is listed below if you want to run it yourself', 'additional' => $sqlTokensTbl));
 
 	try {
 		$c = new CryptX();

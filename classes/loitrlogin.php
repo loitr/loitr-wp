@@ -37,13 +37,12 @@ class LoitrLogin {
 		if($this->installationStatus) {
 	 		# Register languages options
 	        load_plugin_textdomain( 'loitrlogin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-	
-	        # Register site styles and scripts
-			add_action( 'login_enqueue_scripts', array( &$this, 'addStyles' ) );
-			add_action( 'login_enqueue_scripts', array( &$this, 'addScripts' ) );
-			add_action( 'init', array( &$this, 'init_sessions' ) );
-			add_action( 'wp_logout', array( &$this, 'cleanUpSessions' ) );
 
+	        # Register site styles and scripts
+			add_action( 'init', array( &$this, 'initSetup' ), 1 );
+			add_action( 'wp_enqueue_scripts', array( &$this, 'addLoitrStyles' ));
+			add_action( 'wp_enqueue_scripts', array( &$this, 'addLoitrScripts' ));
+			add_action( 'wp_logout', array( &$this, 'cleanUpSessions' ) );
 			add_filter( 'login_message', array( &$this, 'loginBodyMod' ) );
 			add_filter( 'authenticate', array( &$this, 'takeMeHome' ), 10, 3 );
 		}
@@ -52,29 +51,30 @@ class LoitrLogin {
     /**
      * Registers and enqueues plugin-specific styles.
      */
-	function addStyles() {
-		wp_register_style( 'loitrlogin', plugins_url( 'loitr/style.css' ) );
-        wp_enqueue_style( 'loitrlogin' );
+	function addLoitrStyles() {
+		global $loitrConfig;
+		wp_register_style( 'loitrlogincss', plugins_url( $loitrConfig['plugindirname'].'/style.css' ) );
+        wp_enqueue_style( 'loitrlogincss', plugins_url( $loitrConfig['plugindirname'].'/style.css' ) );
 	}
 
     /**
      * Registers and enqueues plugin-specific scripts.
      */
-	function addScripts() {
-		wp_register_script( 'loitrlogin', plugins_url( 'loitr/script.js' ), array( 'jquery' ) );
-		wp_localize_script( 'loitrlogin', 'LoitrAJAX', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
-		wp_enqueue_script( 'loitrlogin' );
+	function addLoitrScripts() {
+		global $loitrConfig;
+		wp_register_script( 'loitrloginjs', plugins_url( $loitrConfig['plugindirname'].'/script.js' ), array( 'jquery' ) );
+		wp_localize_script( 'loitrloginjs', 'LoitrAJAX', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+		wp_enqueue_script( 'loitrloginjs', plugins_url( $loitrConfig['plugindirname'].'/script.js' ), array( 'jquery' ) );
 	}
 
     /**
      * The function overriding the conventional login process and returning the WP_User object
      */
 	function takeMeHome( $user, $username, $password ) {
-		$userobj = new WP_User();
 		$useremail = getSessionValue('thisuseremail');
 		if(strlen($useremail) > 0) {
 		 	$this->cleanUpSessions();
-			$user = $userobj->get_data_by( 'email',  $useremail);
+			$user = $this->getUserInfo( 'email',  $useremail );
 			$user = new WP_User($user->ID);
 			remove_action('authenticate', 'wp_authenticate_username_password', 20);
 			return $user;
@@ -82,9 +82,27 @@ class LoitrLogin {
 	}
 
     /**
+     * get_user_by is not available in WP versions prior to 2.8
+     */
+	function getUserInfo($field, $value) {
+		global $loitrConfig, $wpdb;
+		if(!function_exists('get_user_by')) {
+			$keys = array(
+							'id' => 'ID',
+							'email' => 'user_email',
+							'login' => 'user_login'
+			);
+			$userInfo = $loitrConfig['dbConnection']->get_row("select * from {$wpdb->prefix}users where {$keys[$field]}='$value'");
+			$userObject = new stdClass();
+			foreach($userInfo as $k=>$v) $userObject->$k = $v;
+		} else return get_user_by($field, $value);
+		return $userObject;
+	}
+
+    /**
      * Start sessions
      */
-	function init_sessions() {
+	function initSetup() {
 	    if (!session_id()) {
 	        session_start();
 	    }
@@ -105,6 +123,7 @@ class LoitrLogin {
 
 		setSessionValue('logintoken', md5(rand(0, time()) . time()));
 		$loginQRURL = getQRURL(getSessionValue('logintoken'), 'LOGIN', $loitrConfig['qrsettings']['loginqrtimeout'], 0, $loitrConfig['qrsettings']['dimension'], 'L', $loitrConfig['qrsettings']['dotcolor'], $loitrConfig['qrsettings']['backgroundcolor']);
+		wp_head();
 
 	    if ( empty($message) ){
 	    	if($this->mobileAccess) {
@@ -125,7 +144,7 @@ class LoitrLogin {
 						<div class='left' style='width:".($this->qrSettings['dimension'] + 10).";'>
 							<img src='$loginQRURL'>
 						</div>
-						<div style='overflow:auto;'>
+						<div>
 							<div style='padding:10px 0 0 10px;'>
 								<strong>Scan the QR with Loitr to login securely.</strong>
 								<br /><br />

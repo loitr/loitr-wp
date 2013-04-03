@@ -49,7 +49,7 @@ class LoitrLoginSettings {
 				You can either:<br>
 				<ol>
 					<li>
-						Grant write permissions to the <strong>Loitr Login</strong> plugin folder at wp-content/plugins/loitr and <strong>Deactivate</strong> & <strong>Activate</strong> the plugin again to generate the key files.
+						Grant write permissions to the <strong>Loitr Login</strong> plugin folder residing in wp-content/plugins/ and <strong>Deactivate</strong> & <strong>Activate</strong> the plugin again to generate the key files.
 					</li>
 					<li>
 						Or check to see if the file exists but read permissions have been revoked on the folder, or maybe the key file has been moved.
@@ -65,7 +65,7 @@ class LoitrLoginSettings {
 				$blogdescription = get_bloginfo( 'name' );
 				$adminEmail = get_option('admin_email');
 				$endpointurl = site_url().'/wp-admin/admin-ajax.php?action=loitrlogin';
-				$settingsPageHTML = "<br /><strong>We couldn't locate the service identifier for your blog. (at Line 9 in ".$loitrConfig['abspath']."config.php)</strong>
+				$settingsPageHTML = "<br /><strong>We couldn't locate the service identifier for your blog. (at Line 25 in ".$loitrConfig['abspath']."config.php)</strong>
 				<ol>
 					<li>
 						If you haven't sent the following, then copy the contents of the rectangle below and send it to <strong>contact@loitr.in</strong>. Note that the sender should be: <strong>$adminEmail</strong><br />
@@ -87,7 +87,7 @@ class LoitrLoginSettings {
 						If you have sent it already and haven't yet received your identifier, we are working to verify that you are the rightful owner of your blog. This process takes not more than 2-3 days.
 					</li>
 					<li>
-						If you have received your service identifier, then locate the config.php file in the Loitr plugin folder(typically residing at wp-content/plugins/loitr) and add your service identifier in the <strong>loitrConfig</strong> variable as explained in the config file.
+						If you have received your service identifier, then locate the config.php file in the Loitr plugin folder(typically residing in wp-content/plugins/) and add your service identifier in the <strong>loitrConfig</strong> variable as explained in the config file.
 					</li>
 				</ol>";
 			break;
@@ -123,7 +123,7 @@ class LoitrLoginSettings {
 					".do_settings_sections( __FILE__ )."
 					$settingsPageHTML
 					<br /><br />
-					<a href='https://loitr.in'>Loitr</a> &middot; contact@loitr.in &middot; <a href='https://www.facebook.com/loitr'>Loitr on Facebook</a>
+					<a href='https://loitr.in'>Loitr</a> &middot; contact@loitr.in &middot; <a href='http://loitr.in/blog/post-titled-loitr-wordpress-plugin-for-logins-in-features/9'>Blog post about this plugin</a> &middot; <a href='https://www.facebook.com/loitr'>Loitr on Facebook</a>
 				</div>";
 	}
 

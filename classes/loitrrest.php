@@ -26,10 +26,8 @@ class loitrREST {
 		if($instStatus < 0) $this->installationStatus = false;
 		else $this->installationStatus = true;
 
-		if($this->installationStatus) {
-			add_action( 'wp_ajax_nopriv_loitrlogin', array( &$this, 'processCalls' ) );
-			add_action( 'wp_ajax_loitrlogin', array( &$this, 'processCalls' ) );
-		}
+		add_action( 'wp_ajax_nopriv_loitrlogin', array( &$this, 'processCalls' ) );
+		add_action( 'wp_ajax_loitrlogin', array( &$this, 'processCalls' ) );
 	}
 
 	function processCalls() {
@@ -50,6 +48,7 @@ class loitrREST {
 
 		switch($op) {
 		 	case 'checktoken':
+		 		if(!$this->installationStatus) break;
 		 		$token = sanitize($_REQUEST['token']);
 		 		$tokenDetails = $loitrConfig['dbConnection']->get_row("select * from {$loitrConfig['tables']['tokens']['aliasedto']} where {$loitrConfig['tables']['tokens']['columns']['userid']} <> '' and {$loitrConfig['tables']['tokens']['columns']['token']}='$token'", ARRAY_A);
 
@@ -61,7 +60,6 @@ class loitrREST {
 					$loitrConfig['dbConnection']->query("delete from {$loitrConfig['tables']['tokens']['aliasedto']} where {$loitrConfig['tables']['tokens']['columns']['token']}='$token'");
 					$response['status'] = 1;
 				}
-				$response['session'] = print_r($_SESSION, true);
 			break;
 			case 'signthis':
 				$challenge = sanitize($_REQUEST['challenge']);
@@ -220,21 +218,23 @@ class loitrREST {
 						$crypt->importKeyFromModExp($loitrConfig['loitrPublicKey']['modulus'], $loitrConfig['loitrPublicKey']['exponent']);
 						if(!checkRequestSign($crypt, $loitrResponse)) sendErrorResponse($response, 'loitrunavailable', $crypt);
 
-						list($loitruserid, $loitrdeviceid) = explode('-', $deviceid);
-						$anyActivatedDevice = $dbc->get_results("select * from {$tables['mappings']['aliasedto']} where {$tables['mappings']['columns']['deviceid']}='$loitruserid'", ARRAY_A);
-						if(count($anyActivatedDevice) > 0) {
-							$loitrResponse = contactLoitr(array(
-															'op' => 'deactivate',
-															'token' => $token,
-															'deviceid' => $deviceid,
-															'os' => $_REQUEST['os']
-												));
-							if($loitrResponse['status'] > 0)
-								$dbc->query("delete from {$tables['mappings']['aliasedto']} where {$tables['mappings']['columns']['deviceid']}='$loitruserid'");
+						$response['status'] = 1;
+						$response['errorcode'] = 'deactivatesuccess';
 
-							$response['status'] = 1;
-							$response['errorcode'] = 'deactivatesuccess';
-						} else $response['errorcode'] = 'deactivatefailed';
+						$loitrResponse = contactLoitr(array(
+														'op' => 'deactivate',
+														'token' => $token,
+														'deviceid' => $deviceid,
+														'os' => $_REQUEST['os']
+											));
+
+						if($loitrResponse['status'] > 0) {
+							list($loitruserid, $loitrdeviceid) = explode('-', $deviceid);
+							$anyActivatedDevice = $dbc->get_results("select * from {$tables['mappings']['aliasedto']} where {$tables['mappings']['columns']['deviceid']}='$loitruserid'", ARRAY_A);
+							if(count($anyActivatedDevice) > 0) {
+								$dbc->query("delete from {$tables['mappings']['aliasedto']} where {$tables['mappings']['columns']['deviceid']}='$loitruserid'");
+							}
+						}
 					} else if($loitrResponse['errorcode'] == 'tokenexpired') sendErrorResponse($response, 'qrexpired', $crypt);
 				}
 			break;

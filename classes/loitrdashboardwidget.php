@@ -37,7 +37,7 @@ class LoitrDashboardWidget {
 		$adminEmail = get_option('admin_email');
 		$blogName = get_bloginfo('name');
 		$widgetHTML = '';
-		$activateQRURL = site_url().'/wp-content/plugins/loitr/images/pendingconf.png';
+		$activateQRURL = $loitrConfig['url']['imagesdir'].'pendingconf.png';
 
 		if($this->installationStatus < 0) {
 			if($user_level < 8) {
@@ -56,7 +56,7 @@ class LoitrDashboardWidget {
 						You can either:<br>
 						<ol>
 							<li>
-								Grant write permissions to the <strong>Loitr Login</strong> plugin folder at wp-content/plugins/loitr and <strong>Deactivate</strong> & <strong>Activate</strong> the plugin again to generate the key files.
+								Grant write permissions to the <strong>Loitr Login</strong> plugin folder residing in wp-content/plugins and <strong>Deactivate</strong> & <strong>Activate</strong> the plugin again to generate the key files.
 							</li>
 							<li>
 								Or check to see if the file exists but read permissions have been revoked on the folder, or maybe the key file has been moved.
@@ -74,7 +74,7 @@ class LoitrDashboardWidget {
 								If you have sent it already and haven't yet received your identifier, we are working to verify that you are the rightful owner of your blog. This process takes not more than 2-3 days.
 							</li>
 							<li>
-								If you have received your service identifier, then locate the config.php file in the Loitr plugin folder(typically residing at wp-content/plugins/loitr) and add your service identifier in the <strong>loitrConfig</strong> variable as explained in the config file.
+								If you have received your service identifier, then locate the config.php file in the Loitr plugin folder(typically residing in wp-content/plugins) and add your service identifier in the <strong>loitrConfig</strong> variable as explained in the config file.
 							</li>
 						</ol>
 						Check out the full installation <a target='_blank' href='http://youtu.be/0_1sa6soy5U'>demo video here</a>.";
@@ -97,12 +97,18 @@ class LoitrDashboardWidget {
 				}
 			}
 		} else {
-		 	//$wp_user = new WP_User(2);
 			setSessionValue('activatetoken', md5(rand(0, time()) . time()));
 			$activateQRURL = getQRURL(getSessionValue('activatetoken'), 'ACTIVATE', $loitrConfig['qrsettings']['activateqrtimeout'], 0, $loitrConfig['qrsettings']['dimension'], 'L', $loitrConfig['qrsettings']['dotcolor'], $loitrConfig['qrsettings']['backgroundcolor'], $current_user->ID);
+	    	if($this->mobileAccess) {
+	    	 	$activateQRURL = 'http://loitr.in/qrx'.substr($activateQRURL, strrpos($activateQRURL, '/'));
+				$widgetHTML = "<strong>Click the Activate Loitr link to activate $blogName login on your phone.</strong><br /><br />Once $blogName is activated in your Loitr, you will be able to login to $blogName without typing anything and by simply scanning the QR on the $blogName login page. See <a target='_blank' href='http://youtu.be/EYwhc8mKr1o'>a demo here</a>.<br />Your usernames and passwords are neither used by Loitr nor transferred.<br /><br />Loitr is available for download on all Android & iPhones.";
+				$activateOption = "<a class='loitrbutton loitrpositivebutton' target='_blank' href='$activateQRURL'>Activate Loitr</a>";
+			} else {
+				$activateOption = "<img src='$activateQRURL'>";
+				$widgetHTML = "<strong>Scan this QR with Loitr on your phone to activate $blogName login on your phone.</strong><br /><br />Once $blogName is activated in your Loitr, you will be able to login to $blogName without typing anything and by simply scanning the QR on the $blogName login page. See <a target='_blank' href='http://youtu.be/EYwhc8mKr1o'>a demo here</a>.<br />Your usernames and passwords are neither used by Loitr nor transferred.<br /><br />Loitr is available for download on all Android & iPhones.";
+			}
 		}
-		$widgetHTML = "<strong>Scan this QR with Loitr on your phone to activate $blogName login on your phone.</strong><br /><br />Once $blogName is activated in your Loitr, you will be able to login to $blogName without typing anything and by simply scanning the QR on the $blogName login page. See <a target='_blank' href='http://youtu.be/EYwhc8mKr1o'>a demo here</a>.<br />Your usernames and passwords are neither used by Loitr nor transferred.<br /><br />Loitr is available for download on all Android & iPhones.";
-		echo "<table style='width:100%;'><tr><td valign='top'><img src='$activateQRURL'></td><td valign='top'>$widgetHTML</td></tr></table><a href='https://loitr.in'>Loitr</a> &middot; contact@loitr.in &middot; <a href='https://www.facebook.com/loitr'>Loitr on Facebook</a>";
+		echo "<table style='width:100%;'><tr><td valign='top'>$activateOption</td><td valign='top'>$widgetHTML</td></tr></table><a href='https://loitr.in'>Loitr</a> &middot; contact@loitr.in &middot; <a href='https://www.facebook.com/loitr'>Loitr on Facebook</a>";
 	}
 
 	// Create the function use in the action hook

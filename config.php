@@ -73,6 +73,7 @@ $loitrConfig = array(
 				),
 
 				'abspath' => dirname(__FILE__).'/',
+				'plugindirname' => substr(dirname(__FILE__), strrpos(dirname(__FILE__), '/')+1),
 				'session_tag' => 'loitr_'.get_bloginfo( 'name' ),
 				'url' => array(
 								'blog' => site_url().'/',
