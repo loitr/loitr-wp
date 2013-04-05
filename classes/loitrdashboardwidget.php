@@ -61,38 +61,23 @@ class LoitrDashboardWidget {
 							<li>
 								Or check to see if the file exists but read permissions have been revoked on the folder, or maybe the key file has been moved.
 							</li>
-						</ol>
-						Check out the full installation <a target='_blank' href='http://youtu.be/0_1sa6soy5U'>demo video here</a>.";
+						</ol>";
 					break;
 					case -2 :
-						$widgetHTML = "<strong>We couldn't locate the service identifier for your blog.</strong>
-						<ol>
-							<li>
-								Visit the Loitr Settings section in Settings and copy the Public Key & Endpoint path as displayed there and send it to contact@appavatar.com requesting your service identifier.
-							</li>
-							<li>
-								If you have sent it already and haven't yet received your identifier, we are working to verify that you are the rightful owner of your blog. This process takes not more than 2-3 days.
-							</li>
-							<li>
-								If you have received your service identifier, then locate the config.php file in the Loitr plugin folder(typically residing in wp-content/plugins) and add your service identifier in the <strong>loitrConfig</strong> variable as explained in the config file.
-							</li>
-						</ol>
-						Check out the full installation <a target='_blank' href='http://youtu.be/0_1sa6soy5U'>demo video here</a>.";
+						$widgetHTML = "<strong>We couldn't locate the service identifier for your blog.</strong><br /><br />Visit the Loitr Settings section in Settings and copy the Public Key & Endpoint path as displayed there and send it to contact@appavatar.com requesting your service identifier. Once you receive the information, enter it in the field provided in the Loitr Settings panel.";
 					break;
 					case -3 :
 						$widgetHTML = "<strong>The required database tables were not found.</strong>
 						<br /><br />
 						Loitr expects 2 tables, namely <strong>{$loitrConfig['tables']['mappings']['aliasedto']}</strong> & <strong>{$loitrConfig['tables']['tokens']['aliasedto']}</strong> in your database. This has either happened because the activation process didn't have database access rights or maybe the tables got deleted after creation.<br/>
 						You can try Deactivate-ing & Activate-ing the plugin again to check to see if the tables get created again.<br /><br />
-						Please note that if the tables did existed and users were using Loitr on your blog, they are unable to use Loitr right now, and will have to re-activate Loitr by scanning the Loitr activation QR on their Dashboard.<br /><br />
-						Check out the full installation <a target='_blank' href='http://youtu.be/0_1sa6soy5U'>demo video here</a>.";
+						Please note that if the tables did existed and users were using Loitr on your blog, they are unable to use Loitr right now, and will have to re-activate Loitr by scanning the Loitr activation QR on their Dashboard.<br /><br />";
 					break;
 					case -4 :
 						$widgetHTML = "<strong><a href='http://loitr.in'>http://loitr.in</a> is unreachable. It is either firewalled or this system is not connected to the Web.</strong>
 						<br /><br />
 						This plugin needs to be able to connect to the Loitr website to provide its services. Please check that the connections to the Web are in place and are not being prevented by a firewall.
-						<br /><br />
-						Check out the full installation <a target='_blank' href='http://youtu.be/0_1sa6soy5U'>demo video here</a>.";
+						<br /><br />";
 					break;
 				}
 			}

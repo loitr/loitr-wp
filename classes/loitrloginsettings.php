@@ -31,8 +31,12 @@ class LoitrLoginSettings {
 		add_action('admin_init', array(&$this, 'setupSettings'));
 	}
 
+	function setupSettings() {
+		register_setting('LoitrLoginSettings_options', 'loitr_service_id');
+	}
+
 	function addOptionsLink() {
-		add_options_page('Loitr Settings', 'Loitr Settings', 'manage_options', __FILE__, array(&$this, 'optionsPageHTML'));
+		add_options_page('Loitr Settings Plugin Options', 'Loitr Settings', 'manage_options', 'LoitrLoginSettings_options', array(&$this, 'optionsPageHTML'));
 	}
 
 	function optionsPageHTML() {
@@ -40,9 +44,11 @@ class LoitrLoginSettings {
 
 		global $current_user;
 
+		echo "<div class='wrap'>".screen_icon()."<h2>Loitr Settings</h2>";
+
 		switch($this->installationStatus) {
 			case -1 :
-				$settingsPageHTML = "<strong>Oops! The Private Key file for Loitr is not readable.</strong> <br/>
+				echo "<strong>Oops! The Private Key file for Loitr is not readable.</strong> <br/>
 				The plugin expects a key file at <i>{$loitrConfig['keyFile']}</i>.<br />
 				Either the activation process failed to create it automatically because of lack of write permissions or the file has been moved.<br />
 				<br />
@@ -64,37 +70,36 @@ class LoitrLoginSettings {
 				$blogname = get_bloginfo( 'name' );
 				$blogdescription = get_bloginfo( 'name' );
 				$adminEmail = get_option('admin_email');
-				$endpointurl = site_url().'/wp-admin/admin-ajax.php?action=loitrlogin';
-				$settingsPageHTML = "<br /><strong>We couldn't locate the service identifier for your blog. (at Line 25 in ".$loitrConfig['abspath']."config.php)</strong>
-				<ol>
-					<li>
-						If you haven't sent the following, then copy the contents of the rectangle below and send it to <strong>contact@loitr.in</strong>. Note that the sender should be: <strong>$adminEmail</strong><br />
-						<div style='font-family:courier;background:#EEEEEE;padding:15px;border:1px solid #DDDDDD;'>
-							<strong>Name</strong><br />
-							$blogname<br />
-							<br /><br />
-							<strong>Description</strong><br />
-							$blogdescription<br />
-							<br /><br />
-							<strong>Endpoint URL</strong><br />
-							$endpointurl<br />
-							<br /><br />
-							<strong>Public Key (Modulus & Exponent)</strong><br />
-							".nl2br(print_r($modexp, true))."
-						</div>
-					</li>
-					<li>
-						If you have sent it already and haven't yet received your identifier, we are working to verify that you are the rightful owner of your blog. This process takes not more than 2-3 days.
-					</li>
-					<li>
-						If you have received your service identifier, then locate the config.php file in the Loitr plugin folder(typically residing in wp-content/plugins/) and add your service identifier in the <strong>loitrConfig</strong> variable as explained in the config file.
-					</li>
-				</ol>";
+				$endpointurl = admin_url('admin-ajax.php');
+				echo "<br /><strong>We couldn't locate the service identifier for your blog.</strong>
+					If you haven't sent the following, then copy the contents of the rectangle below and send it to <strong>contact@loitr.in</strong>. Note that the sender should be: <strong>$adminEmail</strong><br />
+					<div style='font-family:courier;background:#EEEEEE;padding:15px;border:1px solid #DDDDDD;'>
+						<strong>Name</strong><br />
+						$blogname<br />
+						<br /><br />
+						<strong>Description</strong><br />
+						$blogdescription<br />
+						<br /><br />
+						<strong>Endpoint URL</strong><br />
+						$endpointurl<br />
+						<br /><br />
+						<strong>Public Key (Modulus & Exponent)</strong><br />
+						".nl2br(print_r($modexp, true))."
+					</div>
+					<br />
+					<form action='options.php' method='post' id='LoitrLoginSettings_options_form' name='LoitrLoginSettings_options_form'>
+                	When you receive your Service ID from contact@loitr.in, enter it here: <input type='text' name='loitr_service_id' value='".get_option('loitr_service_id')."' />
+				";
+				echo settings_fields('LoitrLoginSettings_options');
+				echo "<input name='Submit' type='submit' value='Save Service ID' /></form>
+				<br />
+				<br />
+				Note: If you have sent it already and haven't yet received your identifier, we are working to verify that you are the rightful owner of your blog. This process takes not more than 2-3 days.";
 			break;
 			case -3 :
 				$sqlMappingsTbl = "CREATE TABLE IF NOT EXISTS {$loitrConfig['tables']['mappings']['aliasedto']} ({$loitrConfig['tables']['mappings']['columns']['deviceid']} varchar(250) NOT NULL, {$loitrConfig['tables']['mappings']['columns']['vector']} text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 				$sqlTokensTbl = "CREATE TABLE IF NOT EXISTS {$loitrConfig['tables']['tokens']['aliasedto']} ({$loitrConfig['tables']['tokens']['columns']['userid']} varchar(250) NOT NULL, {$loitrConfig['tables']['tokens']['columns']['token']} varchar(50) NOT NULL, {$loitrConfig['tables']['tokens']['columns']['tokentype']} varchar(20) NOT NULL, {$loitrConfig['tables']['tokens']['columns']['expireson']} bigint(20) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-				$settingsPageHTML = "<strong>The required database tables were not found.</strong>
+				echo "<strong>The required database tables were not found.</strong>
 				<br /><br />
 				Loitr expects 2 tables, namely <strong>{$loitrConfig['tables']['mappings']['aliasedto']}</strong> & <strong>{$loitrConfig['tables']['tokens']['aliasedto']}</strong> in your database. This has either happened because the activation process didn't have database access rights or maybe the tables got deleted after creation.<br/>
 				You can try Deactivate-ing & Activate-ing the plugin again to check to see if the tables get created again.<br /><br />
@@ -108,27 +113,19 @@ class LoitrLoginSettings {
 				Please note that if the tables did existed and users were using Loitr on your blog, they are unable to use Loitr right now, and will have to re-activate Loitr by scanning the Loitr activation QR on their Dashboard.";
 			break;
 			case -4 :
-				$settingsPageHTML = "<strong><a href='http://loitr.in'>http://loitr.in</a> is unreachable. It is either firewalled or this system is not connected to the Web.</strong>
+				echo "<strong><a href='http://loitr.in'>http://loitr.in</a> is unreachable. It is either firewalled or this system is not connected to the Web.</strong>
 				<br /><br />
 				This plugin needs to be able to connect to the Loitr website to provide its services. Please check that the connections to the Web are in place and are not being prevented by a firewall.";
 			break;
 			case 1:
-				$settingsPageHTML = "Everything is alright!";
+				echo "<br />Loitr Login is working fine at the moment!
+					<form action='options.php' method='post' id='LoitrLoginSettings_options_form' name='LoitrLoginSettings_options_form'>
+                	Change to new value only if you have been allotted a new Service ID: <input type='text' name='loitr_service_id' value='".get_option('loitr_service_id')."' />";
+				echo settings_fields('LoitrLoginSettings_options');
+				echo "<input name='Submit' type='submit' value='Save Service ID' /></form>";
 			break;
 		}
-		echo "<div class='wrap'>
-					".screen_icon()."
-					<h2>Loitr Settings</h2>
-					".settings_fields('loitrlogin_settings')."
-					".do_settings_sections( __FILE__ )."
-					$settingsPageHTML
-					<br /><br />
-					<a href='https://loitr.in'>Loitr</a> &middot; contact@loitr.in &middot; <a href='http://loitr.in/blog/post-titled-loitr-wordpress-plugin-for-logins-in-features/9'>Blog post about this plugin</a> &middot; <a href='https://www.facebook.com/loitr'>Loitr on Facebook</a>
-				</div>";
-	}
-
-	function setupSettings() {
-		register_setting('loitrlogin_settings', 'loitrlogin_settings');
+		echo "<br /><br /><a href='https://loitr.in'>Loitr</a> &middot; contact@loitr.in &middot; <a href='http://loitr.in/blog/post-titled-loitr-wordpress-plugin-for-logins-in-features/9'>Blog post about this plugin</a> &middot; <a href='https://www.facebook.com/loitr'>Loitr on Facebook</a></div>";
 	}
 }
 ?>

@@ -24,18 +24,14 @@ Loitr is specially great for collaborators working from various off-site locatio
 
 All your collaborators have to do is download the Loitr app on their phones(Android & iPhones) and scan the activation QR once(available in their Dashboard once the plugin is activated). They can login the next time just by scanning the login QR visible on the login page of your blog.
 
-Find out about the installation process in <a target='_blank' href='http://youtu.be/0_1sa6soy5U'>this demo video</a>.
 The activation & login process for collaborators is <a target='_blank' href='http://youtu.be/EYwhc8mKr1o'>shown here</a>.
 
 == Installation ==
 
-1. Upload the plugin folder(loitr) contents to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress. At this step the plugin needs write permissions in its own folder, database table creation rights & connectivity to the Internet.
-3. When the plugin gets activated properly, visit the Loitr Settings section in the Settings menu. It should display the Loitr configuration for your blog. You need to mail the configuration to contact@loitr.in from the email address that is configured as the admin of your blog. We will verify the ownership of the blog and issue you a service identifier. This step takes no more than one business day.
-4. Once you receive your service identifier, copy it into the config.php file in the loitr plugin folder at Line 9. Additional steps of assistance are provided there.
-5. Your should be able to see the Login with Loitr button & Login QR at the login screen after this.
-
-A video walkthrough is available here: http://youtu.be/0_1sa6soy5U
+1. Activate the plugin through the 'Plugins' menu in WordPress. At this step the plugin needs write permissions in its own folder, database table creation rights & connectivity to the Internet.
+2. When the plugin gets activated properly, visit the Loitr Settings section in the Settings menu. It should display the Loitr configuration for your blog. You need to mail the configuration to contact@loitr.in from the email address that is configured as the admin of your blog. We will verify the ownership of the blog and issue you a service identifier. This step takes no more than one business day.
+3. Once you receive your service identifier, key it in the input box in the Loitr Settings section and save it.
+4. Your Loitr Login install is ready and you should be able to see the Login with Loitr button & Login QR at the login screen after this.
 
 == Frequently Asked Questions ==
 

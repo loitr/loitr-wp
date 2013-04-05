@@ -20,9 +20,8 @@ global $wpdb;
 $loitrConfig = array(
 				'version' => '1.0',
 
-				# ADD YOUR SERVICE IDENTIFIER HERE, eg., 'serviceid' => '3987',
 				# This ID will be provided to you by contact@appavatar.com after verifying that you own this blog.
-				'serviceid' => '',
+				'serviceid' => get_option('loitr_service_id'),
 
 				# The REST endpoint where this plugin connects to contact with Loitr.
 				# This is a constant. Don't change.

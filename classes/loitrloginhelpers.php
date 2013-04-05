@@ -39,7 +39,7 @@ class LoitrLoginHelpers {
 		if ( !file_exists($loitrConfig['keyFile']) || !fopen($loitrConfig['keyFile'], "r") )
 			return -1;
 
-		if ( $loitrConfig['serviceid'] == '' )
+		if ( trim($loitrConfig['serviceid']) == ''  || $loitrConfig['serviceid'] === false )
 			return -2;
 
 		if ( $loitrConfig['dbConnection']->query("select count(*) from {$loitrConfig['tables']['tokens']['aliasedto']}") === false ||
