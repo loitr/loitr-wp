@@ -33,6 +33,7 @@ class LoitrLoginSettings {
 
 	function setupSettings() {
 		register_setting('LoitrLoginSettings_options', 'loitr_service_id');
+		register_setting('LoitrLoginSettings_options', 'loitr_getservice_id');
 	}
 
 	function addOptionsLink() {
@@ -45,6 +46,36 @@ class LoitrLoginSettings {
 		global $current_user;
 
 		echo "<div class='wrap'>".screen_icon()."<h2>Loitr Settings</h2>";
+
+		if(get_option('loitr_getservice_id') == 'getit') {
+			$lpk = new CryptX();
+			$lpk->loadKeyFile($loitrConfig['keyFile']);
+
+			$toSendBlogConfig = array(
+										'name' => get_bloginfo( 'name' ),
+										'description' => get_bloginfo( 'description' ),
+										'endpoint' => admin_url('admin-ajax.php'),
+										'adminemail' => get_option('admin_email'),
+										'publickey' => json_encode($lpk->exportKeyModExp())
+			);
+			$response = wp_remote_post( 'https://loitr.in/api2.0/submitwp.php', array(
+					'method' => 'POST',
+					'timeout' => 45,
+					'redirection' => 1,
+					'httpversion' => '1.1',
+					'blocking' => true,
+					'headers' => array(),
+					'body' => $toSendBlogConfig,
+					'cookies' => array()
+				)
+			);
+			if($response['response']['code'] == '200' && json_decode($response['body'], true)) {
+				$response = json_decode($response['body'], true);
+				echo "<div class='updated settings-error' id='setting-error-settings_updated'><p>Configuration information has been sent. ServiceID will be mailed to <strong>{$toSendBlogConfig['adminemail']}</strong> in a few moments.</p></div>";
+			} else
+				echo "<div class='updated settings-error' id='setting-error-settings_updated'><p>Failed sending configuration information. Try again & check.</p></div>";
+			update_option('loitr_getservice_id', '');
+		}
 
 		switch($this->installationStatus) {
 			case -1 :
@@ -68,33 +99,36 @@ class LoitrLoginSettings {
 				$lpk->loadKeyFile($loitrConfig['keyFile']);
 				$modexp = json_encode($lpk->exportKeyModExp());
 				$blogname = get_bloginfo( 'name' );
-				$blogdescription = get_bloginfo( 'name' );
+				$blogdescription = get_bloginfo( 'description' );
 				$adminEmail = get_option('admin_email');
 				$endpointurl = admin_url('admin-ajax.php');
-				echo "<br /><strong>We couldn't locate the service identifier for your blog.</strong>
-					If you haven't sent the following, then copy the contents of the rectangle below and send it to <strong>contact@loitr.in</strong>. Note that the sender should be: <strong>$adminEmail</strong><br />
+				
+				echo "<div class='updated settings-error' id='setting-error-settings_updated'><p><strong>We couldn't locate the service identifier for your blog.</strong></p></div>
+					If you haven't clicked on the Get Service ID button yet, then click the button to send the contents of the rectangle below to Loitr.<br /> We will then verify the ownership of your blog by issuing a query to your blog.<br />Note that the service identifier will be sent to the admin of $blogname, ie., <strong>$adminEmail</strong><br /><br />
+					<div style='font-family:courier;background:#DDDDDD;padding:5px;'>
+						<form action='options.php' method='post' id='LoitrLoginSettings_options_form' name='LoitrLoginSettings_options_form'>
+							<input type='hidden' name='loitr_getservice_id' id='loitr_getservice_id' value='getit'/>
+							&nbsp;&nbsp;
+							Click the button to send this information to Loitr and get your service identifier.";
+					echo settings_fields('LoitrLoginSettings_options');
+					echo "<input name='Submit' type='submit' value='Get Service ID' /></form>
+					</div>
 					<div style='font-family:courier;background:#EEEEEE;padding:15px;border:1px solid #DDDDDD;'>
 						<strong>Name</strong><br />
 						$blogname<br />
-						<br /><br />
+						<br />
 						<strong>Description</strong><br />
 						$blogdescription<br />
-						<br /><br />
+						<br />
 						<strong>Endpoint URL</strong><br />
 						$endpointurl<br />
-						<br /><br />
+						<br />
 						<strong>Public Key (Modulus & Exponent)</strong><br />
 						".nl2br(print_r($modexp, true))."
 					</div>
-					<br />
-					<form action='options.php' method='post' id='LoitrLoginSettings_options_form' name='LoitrLoginSettings_options_form'>
-                	When you receive your Service ID from contact@loitr.in, enter it here: <input type='text' name='loitr_service_id' value='".get_option('loitr_service_id')."' />
-				";
-				echo settings_fields('LoitrLoginSettings_options');
-				echo "<input name='Submit' type='submit' value='Save Service ID' /></form>
 				<br />
 				<br />
-				Note: If you have sent it already and haven't yet received your identifier, we are working to verify that you are the rightful owner of your blog. This process takes not more than 2-3 days.";
+				Note: If you have already clicked the button once and haven't yet received your identifier, we are working to verify that you are the rightful owner of your blog. This process takes not more than a few hours.";
 			break;
 			case -3 :
 				$sqlMappingsTbl = "CREATE TABLE IF NOT EXISTS {$loitrConfig['tables']['mappings']['aliasedto']} ({$loitrConfig['tables']['mappings']['columns']['deviceid']} varchar(250) NOT NULL, {$loitrConfig['tables']['mappings']['columns']['vector']} text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
