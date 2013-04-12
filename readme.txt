@@ -8,30 +8,31 @@ Stable tag: trunk
 License: Apache 2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
-Loitr enables your users to login without typing their login information. More securely & easily.
+Admins and authors can use Loitr to login into Wordpress dashboard without typing anything.
 
 == Description ==
+The Wordpress Loitr Plugin is an authentication plugin for logging in into Wordpress. Features include:
 
-Secure your Wordpress logins and make it <a target='_blank' href='http://en.wikipedia.org/wiki/Multi-factor_authentication'>2-Factor</a>.
+1. Login into Wordpress dashboard by a scan of a QR code using a smartphone
 
-Loitr is based on patent applied technology with significant improvements on the conventional login mechanism.
+2. Loitr does not store or ask for your Wordpress login username or password on the phone or anywhere else
 
-Loitr enables your collaborators(Administrators, Editors, Authors, etc.) to login without requiring them to type their login credentials anywhere. This helps you overcome sniffing, Man-In-The-Middle & key-logging attacks.
+3. Block lost phones with a single click
 
-Loitr also doesn't need to know the usernames or passwords of your collaborators for it to work. Thus Loitr doesn't add to your security risks.
+4. Available for iPhones and Android phones
 
-Loitr is specially great for collaborators working from various off-site locations with questionable online security measures in place. All communication between the Loitr smartphone apps and Loitr is over HTTPS.
-
-All your collaborators have to do is download the Loitr app on their phones(Android & iPhones) and scan the activation QR once(available in their Dashboard once the plugin is activated). They can login the next time just by scanning the login QR visible on the login page of your blog.
+All your collaborators have to do is download the Loitr app on their phones(Android & iPhone) and scan the activation QR once (available in their Dashboard once the plugin is activated). They can login the next time just by scanning the login QR visible on the login page of your blog.
 
 The activation & login process for collaborators is <a target='_blank' href='http://youtu.be/EYwhc8mKr1o'>shown here</a>.
 
 == Installation ==
 
-1. Activate the plugin through the 'Plugins' menu in WordPress. At this step the plugin needs write permissions in its own folder, database table creation rights & connectivity to the Internet.
-2. When the plugin gets activated properly, visit the Loitr Settings section in the Settings menu. It should display the Loitr configuration for your blog. You need to mail the configuration to contact@loitr.in from the email address that is configured as the admin of your blog. We will verify the ownership of the blog and issue you a service identifier. This step takes no more than one business day.
-3. Once you receive your service identifier, key it in the input box in the Loitr Settings section and save it.
-4. Your Loitr Login install is ready and you should be able to see the Login with Loitr button & Login QR at the login screen after this.
+1. Activate the plugin through the 'Plugins' menu in WordPress or upload it to your blog's plugins directory.
+2. Go to the Loitr Settings page in your Settings section, and click Get Service ID to send us your installation information. Once we have verified your blog, we will send you the Service identifier on the email address registered as the blog's admin.
+2. Important: Check the inbox of the admin's email account. (We will send you your Service identifier to the email address designated as the admin of the Wordpress blog)
+3. Type in the service identifier in the input provided inside Loitr Settings and Save
+
+Your Loitr Login install is ready and you should be able to see the Login with Loitr button & Login QR at the login screen as well as the Activate QRs in the Dashboard.
 
 == Frequently Asked Questions ==
 
@@ -46,6 +47,8 @@ Loitr uses some industry trusted practices & concepts, which include:
 2. Secret Sharing
 3. Non-repudiation
 4. SSL connections
+
+Also, Loitr never gets to know your Wordpress loginid or password, so we don't add to the security risk of your blog or your collaborators.
 In case you would have more questions about security, feel free to write to us at contact@loitr.in
 
 = Is this service free? =

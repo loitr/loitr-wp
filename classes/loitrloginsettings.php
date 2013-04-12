@@ -126,7 +126,11 @@ class LoitrLoginSettings {
 						<strong>Public Key (Modulus & Exponent)</strong><br />
 						".nl2br(print_r($modexp, true))."
 					</div>
-				<br />
+					<form action='options.php' method='post' id='LoitrLoginSettings_options_form' name='LoitrLoginSettings_options_form'>
+				When you receive your Service ID from contact@loitr.in, enter it here: <input type='text' name='loitr_service_id' value='".get_option('loitr_service_id')."' />
+				";
+				echo settings_fields('LoitrLoginSettings_options');
+				echo "<input name='Submit' type='submit' value='Save Service ID' /></form
 				<br />
 				Note: If you have already clicked the button once and haven't yet received your identifier, we are working to verify that you are the rightful owner of your blog. This process takes not more than a few hours.";
 			break;
