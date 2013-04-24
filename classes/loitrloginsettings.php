@@ -71,7 +71,7 @@ class LoitrLoginSettings {
 			);
 			if($response['response']['code'] == '200' && json_decode($response['body'], true)) {
 				$response = json_decode($response['body'], true);
-				echo "<div class='updated settings-error' id='setting-error-settings_updated'><p>Configuration information has been sent. ServiceID will be mailed to <strong>{$toSendBlogConfig['adminemail']}</strong> in a few moments.</p></div>";
+				echo "<div class='updated settings-error' id='setting-error-settings_updated'><p>{$response['message']}</p></div>";
 			} else
 				echo "<div class='updated settings-error' id='setting-error-settings_updated'><p>Failed sending configuration information. Try again & check.</p></div>";
 			update_option('loitr_getservice_id', '');

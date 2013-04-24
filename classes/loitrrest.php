@@ -70,6 +70,17 @@ class loitrREST {
 				$response['admin'] = $adminEmail;
 				$response['status'] = 1;
 			break;
+			case 'setserviceid':
+				$serviceid = sanitize($_REQUEST['serviceid']);
+				$crypt->importKeyFromModExp($loitrConfig['loitrPublicKey']['modulus'], $loitrConfig['loitrPublicKey']['exponent']);
+				if(!checkRequestSign($crypt, $_REQUEST)) sendErrorResponse($response, 'rejected', $crypt);
+
+				if ( get_option( 'loitr_service_id' ) != $serviceid )
+					update_option( 'loitr_service_id', $serviceid );
+				else
+					add_option( 'loitr_service_id', $serviceid );
+				$response['status'] = 1;
+			break;
 		}
 
 		sendJSON($response);
